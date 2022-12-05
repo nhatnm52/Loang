@@ -9,6 +9,7 @@
 using namespace std;
 using namespace cv;
 
+
 int main() {
 
 	std::cout << "Image: ";
@@ -43,193 +44,69 @@ int main() {
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < col; j++) {
 			if (img.at<unsigned short>(Point(i, j)) == 0) {
-
-				bool status = false; // beside not zero points or not
-				bool conflict = false; //conflict or not
+				
 				unsigned short cur = 0; //current value of beside point
+				int m = 0;
+				int n = 0;
+				int status = true;
 
 				if (i == 0) {
 					if (j == 0) {
-						//(0, 1)
-						int m = i;
-						int n = j + 1;
-						unsigned short value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+						int dir[6] = {0, 1, 1, 0, 1, 1};
+						for (int index = 0; index < 6; index += 2) {
+							m = i + dir[index];
+							n = j + dir[index + 1];
+							unsigned short value = img.at<unsigned short>(Point(m, n));
+							if (value != 0) {
+								if (cur == 0) {
+									cur = value;
+								}
+								else {
+									if (cur != value) {
+										common[commonIndex++] = i;
+										common[commonIndex++] = j;
+										break;
+									}
 								}
 							}
 						}
-						//(1, 1)
-						m += 1;
-						//n += 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(1, 0)
-						//m += 1;
-						n -= 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-
 					}
 					else if (j == col - 1) {
-						//(0, -1)
-						int m = i;
-						int n = j - 1;
-						unsigned short value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+						int dir[6] = { 0, -1, 1, -1, 1, 0 };
+						for (int index = 0; index < 6; index += 2) {
+							m = i + dir[index];
+							n = j + dir[index + 1];
+							unsigned short value = img.at<unsigned short>(Point(m, n));
+							if (value != 0) {
+								if (cur == 0) {
+									cur = value;
+								}
+								else {
+									if (cur != value) {
+										common[commonIndex++] = i;
+										common[commonIndex++] = j;
+										break;
+									}
 								}
 							}
 						}
-						//(1, -1)
-						m += 1;
-						//n -= 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(1, 0)
-						//m += 1;
-						n += 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-
 					}
 					else {
-						//(0, -1)
-						int m = i;
-						int n = j - 1;
-						unsigned short value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+						int dir[10] = { 0, -1, 0, 1, 1, -1, 1, 0, 1, 1 };
+						for (int index = 0; index < 10; index += 2) {
+							m = i + dir[index];
+							n = j + dir[index + 1];
+							unsigned short value = img.at<unsigned short>(Point(m, n));
+							if (value != 0) {
+								if (cur == 0) {
+									cur = value;
 								}
-							}
-						}
-						//(0, 1)
-						//m -= 1;
-						n += 2;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(1, 0)
-						m += 1;
-						n -= 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-
-						//(1, 1)
-						//m += 1;
-						n += 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(1, -1)
-						//m += 1;
-						n -= 2;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+								else {
+									if (cur != value) {
+										common[commonIndex++] = i;
+										common[commonIndex++] = j;
+										break;
+									}
 								}
 							}
 						}
@@ -237,186 +114,61 @@ int main() {
 				}
 				else if (i == row - 1) {
 					if (j == 0) {
-						// (-1, 0)
-						int m = i - 1;
-						int n = j;
-						unsigned short value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+						int dir[6] = { -1, 0, -1, 1, 0, 1 };
+						for (int index = 0; index < 6; index += 2) {
+							m = i + dir[index];
+							n = j + dir[index + 1];
+							unsigned short value = img.at<unsigned short>(Point(m, n));
+							if (value != 0) {
+								if (cur == 0) {
+									cur = value;
+								}
+								else {
+									if (cur != value) {
+										common[commonIndex++] = i;
+										common[commonIndex++] = j;
+										break;
+									}
 								}
 							}
 						}
-						//(-1, 1)
-						//m = x - 1;
-						n += 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(0, 1)
-						m += 1;
-						//n = y + 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-
 					}
 					else if (j == col - 1) {
-						// (-1, 0)
-						int m = i - 1;
-						int n = j;
-						unsigned short value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+						int dir[6] = { -1, -1, -1, 0, 0, -1 };
+						for (int index = 0; index < 6; index += 2) {
+							m = i + dir[index];
+							n = j + dir[index + 1];
+							unsigned short value = img.at<unsigned short>(Point(m, n));
+							if (value != 0) {
+								if (cur == 0) {
+									cur = value;
+								}
+								else {
+									if (cur != value) {
+										common[commonIndex++] = i;
+										common[commonIndex++] = j;
+										break;
+									}
 								}
 							}
 						}
-						//(-1, -1)
-						//m = x - 1;
-						n -= 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(0, -1)
-						m += 1;
-						//n = y - 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-
 					}
 					else {
-						// (-1, 0)
-						int m = i - 1;
-						int n = j;
-						unsigned short value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+						int dir[10] = { -1, -1, -1, 0, -1, 1, 0, -1, 0, 1 };
+						for (int index = 0; index < 10; index += 2) {
+							m = i + dir[index];
+							n = j + dir[index + 1];
+							unsigned short value = img.at<unsigned short>(Point(m, n));
+							if (value != 0) {
+								if (cur == 0) {
+									cur = value;
 								}
-							}
-						}
-						//(0, 1)
-						m += 1;
-						n += 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(0, -1)
-						//m = x;
-						n -= 2;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-
-						//(-1, -1)
-						m -= 1;
-						//n = y - 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(-1, 1)
-						//m = x - 1;
-						n += 2;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+								else {
+									if (cur != value) {
+										common[commonIndex++] = i;
+										common[commonIndex++] = j;
+										break;
+									}
 								}
 							}
 						}
@@ -424,321 +176,76 @@ int main() {
 				}
 				else {
 					if (j == 0) {
-						// (-1, 0)
-						int m = i - 1;
-						int n = j;
-						unsigned short value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+						int dir[10] = { -1, 0, -1, 1, 0, 1, 1, 0, 1, 1 };
+						for (int index = 0; index < 10; index += 2) {
+							m = i + dir[index];
+							n = j + dir[index + 1];
+							unsigned short value = img.at<unsigned short>(Point(m, n));
+							if (value != 0) {
+								if (cur == 0) {
+									cur = value;
 								}
-							}
-						}
-						//(1, 0)
-						m += 2;
-						//n = y;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(1, 1)
-						//m = x + 1;
-						n += 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(0, 1)
-						m -= 1;
-						//n = y + 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-
-						//(-1, 1)
-						m -= 1;
-						//n = y + 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+								else {
+									if (cur != value) {
+										common[commonIndex++] = i;
+										common[commonIndex++] = j;
+										break;
+									}
 								}
 							}
 						}
 					}
 					else if (j == col - 1) {
-						// (-1, 0)
-						int m = i - 1;
-						int n = j;
-						unsigned short value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+						int dir[10] = { -1, -1, -1, 0, 0, -1, 1, -1, 1, 0 };
+						for (int index = 0; index < 10; index += 2) {
+							m = i + dir[index];
+							n = j + dir[index + 1];
+							unsigned short value = img.at<unsigned short>(Point(m, n));
+							if (value != 0) {
+								if (cur == 0) {
+									cur = value;
+								}
+								else {
+									if (cur != value) {
+										common[commonIndex++] = i;
+										common[commonIndex++] = j;
+										break;
+									}
 								}
 							}
 						}
-						//(1, 0)
-						m += 2;
-						//n = y;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(1, -1)
-						//m = x + 1;
-						n -= 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(0, -1)
-						m -= 1;
-						//n = y - 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(-1, -1)
-						m -= 1;
-						//n = y - 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-
 					}
 					else {
-						// (-1, 0)
-						int m = i - 1;
-						int n = j;
-						unsigned short value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+						int dir[16] = { -1, -1, -1, 0, -1, 1, 0, -1, 0, 1, 1, -1, 1, 0, 1, 1 };
+						for (int index = 0; index < 16; index += 2) {
+							m = i + dir[index];
+							n = j + dir[index + 1];
+							unsigned short value = img.at<unsigned short>(Point(m, n));
+							if (value != 0) {
+								if (cur == 0) {
+									cur = value;
 								}
-							}
-						}
-						//(1, 0)
-						m += 2;
-						//n = y;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(0, 1)
-						m -= 1;
-						n += 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(0, -1)
-						//m = x;
-						n -= 2;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-
-						//(-1, -1)
-						m -= 1;
-						//n = y - 1;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(1, 1)
-						m += 2;
-						n += 2;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(1, -1)
-						//m = x + 1;
-						n -= 2;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
-								}
-							}
-						}
-						//(-1, 1)
-						m -= 2;
-						n += 2;
-						value = img.at<unsigned short>(Point(m, n));
-						if (value != 0) {
-							status = true;
-							if (cur == 0) {
-								cur = value;
-							}
-							else {
-								if (cur != value) {
-									conflict = true;
-									goto check;
+								else {
+									if (cur != value) {
+										common[commonIndex++] = i;
+										common[commonIndex++] = j;
+										status = false;
+										break;
+									}
 								}
 							}
 						}
 					}
 				}
 
-			check:
-				if (conflict) {
-					//add to common
-					common[commonIndex++] = i;
-					common[commonIndex++] = j;
-				}
-				else {
+				if (cur != 0) {
 					if (status) {
-						//add to change
 						newHull[newIndex++] = i;
 						newHull[newIndex++] = j;
 						newHull[newIndex++] = cur;
-						//changeIndex += 3;
-						//add to hull
+
 						hull[hullIndex++] = i;
 						hull[hullIndex++] = j;
-						//hullIndex += 2;
 					}
 				}
 			}
@@ -760,712 +267,204 @@ int main() {
 	//Splash
 	for (int k = 1; k < maxRound; k++) {
 		//cout << k + 1 << "\n";
-		for (int i = 0; i < hullIndex; i += 2) {
-			int x = hull[i];
-			int y = hull[i + 1];
-
-			unsigned short value = img.at<unsigned short>(Point(x, y));
+		for (int in = 0; in < hullIndex; in += 2) {
+			int i = hull[in];
+			int j = hull[in + 1];
+			int m = 0;
+			int n = 0;
+			unsigned short value = img.at<unsigned short>(Point(i, j));
 			unsigned short cur;
 
-			if (x == 0) {
-				if (y == 0) {
-					//(0, 1)
-					int m = x;
-					int n = y + 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
+			if (i == 0) {
+				if (j == 0) {
+					int dir[6] = { 0, 1, 1, 0, 1, 1 };
+					for (int index = 0; index < 6; index += 2) {
+						m = i + dir[index];
+						n = j + dir[index + 1];
+						cur = img.at<unsigned short>(Point(m, n));
+						if (cur == 0) {
+							newHull[newIndex++] = m;
+							newHull[newIndex++] = n;
+							img.at<unsigned short>(Point(m, n)) = 65535 - value;
+							//newIndex += 3;
 						}
-					}
-					//(1, 1)
-					m += 1;
-					//n += 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(1, 0)
-					//m += 1;
-					n -= 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
+						else {
+							if (cur > 32768) {
+								if (cur != 65535 - value) {
+									img.at<unsigned short>(Point(m, n)) = 65535;
+								}
 							}
 						}
 					}
 				}
-				else if (y == col - 1) {
-					//(0, -1)
-					int m = x;
-					int n = y - 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
+				else if (j == col - 1) {
+					int dir[6] = { 0, -1, 1, -1, 1, 0 };
+					for (int index = 0; index < 6; index += 2) {
+						m = i + dir[index];
+						n = j + dir[index + 1];
+						cur = img.at<unsigned short>(Point(m, n));
+						if (cur == 0) {
+							newHull[newIndex++] = m;
+							newHull[newIndex++] = n;
+							img.at<unsigned short>(Point(m, n)) = 65535 - value;
+							//newIndex += 3;
 						}
-					}
-					//(1, -1)
-					m += 1;
-					//n -= 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(1, 0)
-					//m += 1;
-					n += 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
+						else {
+							if (cur > 32768) {
+								if (cur != 65535 - value) {
+									img.at<unsigned short>(Point(m, n)) = 65535;
+								}
 							}
 						}
 					}
 				}
 				else {
-					//(0, -1)
-					int m = x;
-					int n = y - 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
+					int dir[10] = { 0, -1, 0, 1, 1, -1, 1, 0, 1, 1 };
+					for (int index = 0; index < 10; index += 2) {
+						m = i + dir[index];
+						n = j + dir[index + 1];
+						cur = img.at<unsigned short>(Point(m, n));
+						if (cur == 0) {
+							newHull[newIndex++] = m;
+							newHull[newIndex++] = n;
+							img.at<unsigned short>(Point(m, n)) = 65535 - value;
+							//newIndex += 3;
 						}
-					}
-					//(0, 1)
-					//m -= 1;
-					n += 2;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(1, 0)
-					m += 1;
-					n -= 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(1, 1)
-					//m += 1;
-					n += 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(1, -1)
-					//m += 1;
-					n -= 2;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
+						else {
+							if (cur > 32768) {
+								if (cur != 65535 - value) {
+									img.at<unsigned short>(Point(m, n)) = 65535;
+								}
 							}
 						}
 					}
 				}
 			}
-			else if (x == row - 1) {
-				if (y == 0) {
-					// (-1, 0)
-					int m = x - 1;
-					int n = y;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
+			else if (i == row - 1) {
+				if (j == 0) {
+					int dir[6] = { -1, 0, -1, 1, 0, 1 };
+					for (int index = 0; index < 6; index += 2) {
+						m = i + dir[index];
+						n = j + dir[index + 1];
+						cur = img.at<unsigned short>(Point(m, n));
+						if (cur == 0) {
+							newHull[newIndex++] = m;
+							newHull[newIndex++] = n;
+							img.at<unsigned short>(Point(m, n)) = 65535 - value;
+							//newIndex += 3;
 						}
-					}
-					//(-1, 1)
-					//m = x - 1;
-					n += 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(0, 1)
-					m += 1;
-					//n = y + 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
+						else {
+							if (cur > 32768) {
+								if (cur != 65535 - value) {
+									img.at<unsigned short>(Point(m, n)) = 65535;
+								}
 							}
 						}
 					}
 				}
-				else if (y == col - 1) {
-					// (-1, 0)
-					int m = x - 1;
-					int n = y;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
+				else if (j == col - 1) {
+					int dir[6] = { -1, -1, -1, 0, 0, -1 };
+					for (int index = 0; index < 6; index += 2) {
+						m = i + dir[index];
+						n = j + dir[index + 1];
+						cur = img.at<unsigned short>(Point(m, n));
+						if (cur == 0) {
+							newHull[newIndex++] = m;
+							newHull[newIndex++] = n;
+							img.at<unsigned short>(Point(m, n)) = 65535 - value;
+							//newIndex += 3;
 						}
-					}
-					//(-1, -1)
-					//m = x - 1;
-					n -= 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(0, -1)
-					m += 1;
-					//n = y - 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
+						else {
+							if (cur > 32768) {
+								if (cur != 65535 - value) {
+									img.at<unsigned short>(Point(m, n)) = 65535;
+								}
 							}
 						}
 					}
 				}
 				else {
-					// (-1, 0)
-					int m = x - 1;
-					int n = y;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
+					int dir[10] = { -1, -1, -1, 0, -1, 1, 0, -1, 0, 1 };
+					for (int index = 0; index < 10; index += 2) {
+						m = i + dir[index];
+						n = j + dir[index + 1];
+						cur = img.at<unsigned short>(Point(m, n));
+						if (cur == 0) {
+							newHull[newIndex++] = m;
+							newHull[newIndex++] = n;
+							img.at<unsigned short>(Point(m, n)) = 65535 - value;
+							//newIndex += 3;
 						}
-					}
-					//(0, 1)
-					m += 1;
-					n += 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(0, -1)
-					//m = x;
-					n -= 2;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(-1, -1)
-					m -= 1;
-					//n = y - 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(-1, 1)
-					//m = x - 1;
-					n += 2;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
+						else {
+							if (cur > 32768) {
+								if (cur != 65535 - value) {
+									img.at<unsigned short>(Point(m, n)) = 65535;
+								}
 							}
 						}
 					}
 				}
 			}
 			else {
-				if (y == 0) {
-					// (-1, 0)
-					int m = x - 1;
-					int n = y;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
+				if (j == 0) {
+					int dir[10] = { -1, 0, -1, 1, 0, 1, 1, 0, 1, 1 };
+					for (int index = 0; index < 10; index += 2) {
+						m = i + dir[index];
+						n = j + dir[index + 1];
+						cur = img.at<unsigned short>(Point(m, n));
+						if (cur == 0) {
+							newHull[newIndex++] = m;
+							newHull[newIndex++] = n;
+							img.at<unsigned short>(Point(m, n)) = 65535 - value;
+							//newIndex += 3;
 						}
-					}
-					//(1, 0)
-					m += 2;
-					//n = y;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(1, 1)
-					//m = x + 1;
-					n += 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(0, 1)
-					m -= 1;
-					//n = y + 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(-1, 1)
-					m -= 1;
-					//n = y + 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
+						else {
+							if (cur > 32768) {
+								if (cur != 65535 - value) {
+									img.at<unsigned short>(Point(m, n)) = 65535;
+								}
 							}
 						}
 					}
 				}
-				else if (y == col - 1) {
-					// (-1, 0)
-					int m = x - 1;
-					int n = y;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
+				else if (j == col - 1) {
+					int dir[10] = { -1, -1, -1, 0, 0, -1, 1, -1, 1, 0 };
+					for (int index = 0; index < 10; index += 2) {
+						m = i + dir[index];
+						n = j + dir[index + 1];
+						cur = img.at<unsigned short>(Point(m, n));
+						if (cur == 0) {
+							newHull[newIndex++] = m;
+							newHull[newIndex++] = n;
+							img.at<unsigned short>(Point(m, n)) = 65535 - value;
+							//newIndex += 3;
 						}
-					}
-					//(1, 0)
-					m += 2;
-					//n = y;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(1, -1)
-					//m = x + 1;
-					n -= 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(0, -1)
-					m -= 1;
-					//n = y - 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(-1, -1)
-					m -= 1;
-					//n = y - 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
+						else {
+							if (cur > 32768) {
+								if (cur != 65535 - value) {
+									img.at<unsigned short>(Point(m, n)) = 65535;
+								}
 							}
 						}
 					}
 				}
 				else {
-					// (-1, 0)
-					int m = x - 1;
-					int n = y;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
+					int dir[16] = { -1, -1, -1, 0, -1, 1, 0, -1, 0, 1, 1, -1, 1, 0, 1, 1 };
+					for (int index = 0; index < 16; index += 2) {
+						m = i + dir[index];
+						n = j + dir[index + 1];
+						cur = img.at<unsigned short>(Point(m, n));
+						if (cur == 0) {
+							newHull[newIndex++] = m;
+							newHull[newIndex++] = n;
+							img.at<unsigned short>(Point(m, n)) = 65535 - value;
+							//newIndex += 3;
 						}
-					}
-					//(1, 0)
-					m += 2;
-					//n = y;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(0, 1)
-					m -= 1;
-					n += 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(0, -1)
-					//m = x;
-					n -= 2;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(-1, -1)
-					m -= 1;
-					//n = y - 1;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(1, 1)
-					m += 2;
-					n += 2;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(1, -1)
-					//m = x + 1;
-					n -= 2;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
-							}
-						}
-					}
-					//(-1, 1)
-					m -= 2;
-					n += 2;
-					cur = img.at<unsigned short>(Point(m, n));
-					if (cur == 0) {
-						newHull[newIndex++] = m;
-						newHull[newIndex++] = n;
-						img.at<unsigned short>(Point(m, n)) = 65535 - value;
-						//newIndex += 3;
-					}
-					else {
-						if (cur > 32768) {
-							if (cur != 65535 - value) {
-								img.at<unsigned short>(Point(m, n)) = 65535;
+						else {
+							if (cur > 32768) {
+								if (cur != 65535 - value) {
+									img.at<unsigned short>(Point(m, n)) = 65535;
+								}
 							}
 						}
 					}
@@ -1509,20 +508,20 @@ int main() {
 
 	//imwrite(output, img);
 
-	Mat img2 = imread("E:/Working/Loang/Input/output" + name, IMREAD_ANYDEPTH);
+	//Mat img2 = imread("E:/Working/Loang/Input/output" + name, IMREAD_ANYDEPTH);
 
-	int count = 0;
+	//int count = 0;
 
-	for (int i = 0; i < row; i++) {
-		for (int j = 0; j < col; j++) {
-			if (img.at<unsigned short>(Point(i, j)) != (img2.at<unsigned short>(Point(i, j)))) count++;
-		}
-	}
+	//for (int i = 0; i < row; i++) {
+	//	for (int j = 0; j < col; j++) {
+	//		if (img.at<unsigned short>(Point(i, j)) != (img2.at<unsigned short>(Point(i, j)))) count++;
+	//	}
+	//}
 
-	std::cout << "\nDiffirences: " << count;
+	//std::cout << "\nDiffirences: " << count;
 
-	imshow("Result: ", img);
-	waitKey(0);
+	//cv::imshow("Result: ", img);
+	//cv::waitKey(0);
 
 	return 0;
 }
