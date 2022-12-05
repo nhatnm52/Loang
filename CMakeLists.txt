@@ -4,7 +4,3 @@ find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 add_executable( DisplayImage main.cpp )
 target_link_libraries( DisplayImage ${OpenCV_LIBS} )
-
-
-
-cmake -D CMAKE_PREFIX_PATH=~/build
