@@ -13,14 +13,12 @@ using namespace cv;
 int main() {
 
 	std::cout << "Image: ";
-	string name;
+	string namefile;
 	cin >> name;
 
 	std::cout << "\nNum of round: ";
 	int maxRound;
 	cin >> maxRound;
-
-	string namefile = "E:/Working/Loang/Input/" + name;
 
 	Mat img = imread(namefile, IMREAD_ANYDEPTH);
 
